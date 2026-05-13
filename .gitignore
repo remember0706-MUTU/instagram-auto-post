@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+post_log.txt
+.env
+config.local.py
