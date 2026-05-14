@@ -50,7 +50,7 @@ JSON 형식으로 반환:
         json_match = re.search(r'\{.*\}', text, re.DOTALL)
         if json_match:
             result = json.loads(json_match.group())
-            result["caption"] = result["caption"].rstrip() + "\n\nhttps://www.remember4287.com/"
+            result["caption"] = result["caption"].rstrip() + "\n\n👉 프로필 링크 참고"
             print(f"[콘텐츠 생성 완료] 키워드: {keyword}")
             return result
         else:
@@ -60,7 +60,7 @@ JSON 형식으로 반환:
         print(f"[콘텐츠 생성 오류] {e}")
         # 기본 콘텐츠 반환
         return {
-            "caption": f"오늘도 건강하고 행복한 하루 보내세요 ✨\n{keyword}으로 가득한 하루!\n여러분의 오늘은 어떤가요?\n\nhttps://www.remember4287.com/",
+            "caption": f"오늘도 건강하고 행복한 하루 보내세요 ✨\n{keyword}으로 가득한 하루!\n여러분의 오늘은 어떤가요?\n\n👉 프로필 링크 참고",
             "hashtags": f"#{keyword} #라이프스타일 #건강 #일상 #힐링 #웰빙 #오늘 #daily #lifestyle #health",
             "keyword": keyword
         }
