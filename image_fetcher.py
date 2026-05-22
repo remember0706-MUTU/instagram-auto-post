@@ -5,10 +5,26 @@
 import requests
 import os
 import random
+import json
 from config import PEXELS_API_KEY
 
 DOWNLOAD_DIR = "images"
 os.makedirs(DOWNLOAD_DIR, exist_ok=True)
+USED_PHOTOS_FILE = "used_photos.json"
+
+def load_used_photos() -> set:
+    if os.path.exists(USED_PHOTOS_FILE):
+        with open(USED_PHOTOS_FILE, "r") as f:
+            return set(json.load(f))
+    return set()
+
+def save_used_photo(photo_id: int):
+    used = load_used_photos()
+    used.add(photo_id)
+    # 최근 200개만 유지
+    used_list = list(used)[-200:]
+    with open(USED_PHOTOS_FILE, "w") as f:
+        json.dump(used_list, f)
 
 def search_pexels_image(keyword: str, orientation: str = "portrait") -> dict:
     """
@@ -23,6 +39,25 @@ def search_pexels_image(keyword: str, orientation: str = "portrait") -> dict:
         "건강": "healthy lifestyle",
         "웰빙": "wellness",
         "일상": "daily life",
+        "월요일동기부여": "motivation monday",
+        "한주시작": "monday motivation",
+        "건강습관": "healthy habits",
+        "건강식단": "healthy food diet",
+        "운동루틴": "workout fitness routine",
+        "미드위크": "midweek motivation",
+        "웰빙라이프": "wellness lifestyle",
+        "건강음식": "healthy food",
+        "주말준비": "weekend lifestyle",
+        "주말일상": "weekend lifestyle",
+        "카페투어": "cafe coffee",
+        "일요일": "sunday relaxation",
+        "주말마무리": "weekend relaxation",
+        "한주준비": "weekly planning",
+        "화요일": "tuesday motivation",
+        "수요일": "wellness wednesday",
+        "목요일": "healthy thursday",
+        "금요일": "friday lifestyle",
+        "토요일": "saturday lifestyle",
         "힐링": "relaxation healing",
         "운동": "workout fitness",
         "식단": "healthy food",
@@ -41,7 +76,7 @@ def search_pexels_image(keyword: str, orientation: str = "portrait") -> dict:
         "query": en_keyword,
         "orientation": orientation,
         "size": "large",
-        "per_page": 10,
+        "per_page": 80,
         "locale": "ko-KR"
     }
 
@@ -62,9 +97,15 @@ def search_pexels_image(keyword: str, orientation: str = "portrait") -> dict:
             data = response.json()
             photos = data.get("photos", [])
 
-        # 랜덤으로 하나 선택
-        photo = random.choice(photos) if photos else None
+        # 사용한 사진 제외 후 랜덤 선택
+        used = load_used_photos()
+        fresh_photos = [p for p in photos if p["id"] not in used]
+        if not fresh_photos:
+            print(f"[이미지 검색] 새 사진 없음 - 기록 초기화 후 재선택")
+            fresh_photos = photos  # 모두 사용했으면 초기화
+        photo = random.choice(fresh_photos) if fresh_photos else None
         if photo:
+            save_used_photo(photo["id"])
             print(f"[이미지 검색] 키워드: {keyword} → 이미지 찾음 (ID: {photo['id']})")
             return {
                 "id": photo["id"],

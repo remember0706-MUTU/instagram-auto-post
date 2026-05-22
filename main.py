@@ -8,6 +8,9 @@ import time
 import random
 from datetime import datetime
 
+# 실패 추적 플래그
+_post_failed = False
+
 # Windows 콘솔 UTF-8 출력 설정
 if sys.platform == "win32":
     try:
@@ -32,7 +35,7 @@ def run_daily_post(category=None):
     # 1. API 연결 확인
     if not check_api_connection():
         print("[중단] Instagram API 연결 실패")
-        return
+        sys.exit(1)
 
     # 2. 카테고리 설정 (시간대별 고정)
     if category is None:
@@ -55,13 +58,13 @@ def run_daily_post(category=None):
     content = generate_instagram_content(keyword, category)
     if not content:
         print("[중단] 콘텐츠 생성 실패")
-        return
+        sys.exit(1)
 
     # 6. 이미지 검색 (Pexels)
     image_info = search_pexels_image(keyword)
     if not image_info:
         print("[중단] 이미지 검색 실패")
-        return
+        sys.exit(1)
 
     # 7. 인스타그램 게시 (Pexels URL 직접 사용)
     success = post_to_instagram(
@@ -74,7 +77,8 @@ def run_daily_post(category=None):
         print(f"[완료] '{keyword}' 키워드로 게시 성공!")
         log_post(keyword, content, image_info)
     else:
-        print(f"[실패] 게시 실패. 로그를 확인하세요.")
+        print(f"[실패] 게시 실패 - 인스타그램 API 응답을 위 로그에서 확인하세요.")
+        sys.exit(1)
 
     print(f"{'='*50}\n")
 
