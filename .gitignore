@@ -3,3 +3,4 @@ __pycache__/
 post_log.txt
 .env
 config.local.py
+config.py
