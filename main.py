@@ -57,7 +57,8 @@ def run_daily_post(category=None):
     success = post_to_instagram(
         image_url=image_info["url"],
         caption=content["caption"],
-        hashtags=content["hashtags"]
+        hashtags=content["hashtags"],
+        caption_en=content.get("caption_en", "")
     )
 
     if success:
