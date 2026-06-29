@@ -7,7 +7,6 @@ INSTAGRAM_ACCOUNT_ID = os.getenv("INSTAGRAM_ACCOUNT_ID", "")
 
 GRAPH_API_BASE = "https://graph.instagram.com/v19.0"
 
-
 def upload_image_to_instagram(image_url, caption):
     url = GRAPH_API_BASE + "/" + INSTAGRAM_ACCOUNT_ID + "/media"
     data = {
@@ -24,7 +23,6 @@ def upload_image_to_instagram(image_url, caption):
     except Exception as e:
         print("[업로드 오류] " + str(e))
         return None
-
 
 def publish_instagram_post(container_id):
     url = GRAPH_API_BASE + "/" + INSTAGRAM_ACCOUNT_ID + "/media_publish"
@@ -43,13 +41,16 @@ def publish_instagram_post(container_id):
         print("[발행 오류] " + str(e))
         return None
 
-
-def post_to_instagram(image_url, caption, hashtags):
+def post_to_instagram(image_url, caption, hashtags, caption_en=""):
     if not INSTAGRAM_ACCESS_TOKEN or not INSTAGRAM_ACCOUNT_ID:
         print("[오류] INSTAGRAM_ACCESS_TOKEN 또는 INSTAGRAM_ACCOUNT_ID 환경변수가 없습니다.")
         return False
 
-    full_caption = caption + "\n\n" + hashtags
+    if caption_en:
+        full_caption = caption + "\n\n" + caption_en + "\n\n" + hashtags
+    else:
+        full_caption = caption + "\n\n" + hashtags
+
     print("[게시 시작] 이미지: " + image_url[:50] + "...")
     print("[캡션 미리보기] " + full_caption[:100] + "...")
 
@@ -62,7 +63,6 @@ def post_to_instagram(image_url, caption, hashtags):
         print("[성공] 인스타그램 게시 완료!")
         return True
     return False
-
 
 def check_api_connection():
     if not INSTAGRAM_ACCESS_TOKEN:
@@ -86,7 +86,6 @@ def check_api_connection():
     except Exception as e:
         print("[연결 오류] " + str(e))
         return False
-
 
 if __name__ == "__main__":
     check_api_connection()
