@@ -33,50 +33,50 @@ HASHTAG_MAP = {
 }
 
 def generate_instagram_content(keyword, category="명언"):
-        style = CATEGORY_STYLE.get(category, CATEGORY_STYLE["명언"])
+    style = CATEGORY_STYLE.get(category, CATEGORY_STYLE["명언"])
 
     prompt = (
-                "당신은 인스타그램에서 인생조언과 감성 명언으로 큰 반향을 얻는 콘텐츠 크리에이터입니다.\n\n"
-                "오늘의 주제: " + keyword + "\n"
-                "카테고리: " + category + "\n"
-                "글쓰기 톤: " + style["tone"] + "\n"
-                "구성 방식: " + style["structure"] + "\n\n"
-                "다음 조건을 지켜 인스타그램 캡션을 작성해주세요:\n"
-                "- 한국어로 작성, 총 5~8줄\n"
-                "- 이모지 2~3개 자연스럽게 포함\n"
-                "- 마지막 줄은 저장하거나 공유하고 싶게 만드는 한 문장\n"
-                "- 광고나 홍보 느낌 없이, 진심 어린 글처럼\n"
-                                           "- \"👉 프로필 링크 참고\" 문구 마지막에 추가\n\n"
-                "그리고 위 한국어 캡션을 자연스러운 영어로도 번역해주세요 (caption_en):\n"
-                "- 직역 말고 영어 원어민이 쓸 법한 자연스러운 표현으로\n"
-                "- 이모지는 동일하게 유지\n"
-                "- \"👉 Check profile link\" 문구 마지막에 추가\n\n"
-                "반드시 아래 JSON 형식으로만 반환 (다른 텍스트 없이):\n"
-                "{\"caption\": \"한국어 캡션 전체 내용\", \"caption_en\": \"English caption\", \"keyword\": \"" + keyword + "\"}"
+        당신은 인스타그램에서 인생조언과 감성 명언으로 큰 반향을 얻는 콘텐츠 크리에이터입니다.\n\n"
+        "오늘의 주제: " + keyword + "\n"
+        "카테고리: " + category + "\n"
+        "글쓰기 톤: " + style["tone"] + "\n"
+        "구성 방식: " + style["structure"] + "\n\n"
+        "다음 조건을 지켜 인스타그램 캡션을 작성해주세요:\n"
+        "- 한국어로 작성, 총 5~8줄\n"
+        "- 이모지 2~3개 자연스럽게 포함\n"
+        "- 마지막 줄은 저장하거나 공유하고 싶게 만드는 한 문장\n"
+        "- 광고나 홍보 느낌 없이, 진심 어린 글처럼\n"
+        "- \"👉 프로필 링크 참고\" 문구 마지막에 추가\n\n"
+        "그리고 위 한국어 캡션을 자연스러운 영어로도 번역해주세요 (caption_en):\n"
+        "- 직역 말고 영어 원어민이 쓸 법한 자연스러운 표현으로\n"
+        "- 이모지는 동일하게 유지\n"
+        "- \"👉 Check profile link\" 문구 마지막에 추가\n\n"
+        "반드시 아래 JSON 형식으로만 반환 (다른 텍스트 없이):\n"
+        ""
     )
 
     try:
-                message = client.messages.create(
-                                model="claude-opus-4-5",
-                                max_tokens=1024,
-                                messages=[{"role": "user", "content": prompt}]
-                )
+        message = client.messages.create(
+            model="claude-opus-4-5",
+            max_tokens=1024,
+            messages=[{"role": "user", "content": prompt}]
+        )
 
         text = message.content[0].text
         json_match = re.search(r'\{.*\}', text, re.DOTALL)
         if json_match:
-                        result = json.loads(json_match.group())
-                        result["hashtags"] = HASHTAG_MAP.get(category, HASHTAG_MAP["명언"])
-                        print("[콘텐츠 생성 완료] 카테고리: " + category + " / 키워드: " + keyword)
-                        return result
-else:
-                raise ValueError("JSON 파싱 실패")
+            result = json.loads(json_match.group())
+            result["hashtags"] = HASHTAG_MAP.get(category, HASHTAG_MAP["명언"])
+            print("[콘텐츠 생성 완료] 카테고리: " + category + " / 키워드: " + keyword)
+            return result
+        else:
+            raise ValueError("JSON 파싱 실패")
 
-except Exception as e:
+    except Exception as e:
         print("[콘텐츠 생성 오류] " + str(e))
         return {
-                        "caption": "지나고 나서야 보이는 것들이 있습니다 ✨\n" + keyword + "\n그때는 몰랐지만, 지금은 압니다.\n천천히 가도 괜찮아요.\n\n👉 프로필 링크 참고",
-                        "caption_en": "Some things only become clear in hindsight ✨\n" + keyword + "\nI didn't know then, but I do now.\nIt's okay to take it slow.\n\n👉 Check profile link",
-                        "hashtags": HASHTAG_MAP.get(category, HASHTAG_MAP["명언"]),
-                        "keyword": keyword
+            "caption": "지나고 나서야 보이는 것들이 있습니다 ✨\n" + keyword + "\n그때는 몰랐지만, 지금은 압니다.\n천천히 가도 괜찮아요.\n\n👉 프로필 링크 참고",
+            "caption_en": "Some things only become clear in hindsight ✨\n" + keyword + "\nI didn't know then, but I do now.\nIt's okay to take it slow.\n\n👉 Check profile link",
+            "hashtags": HASHTAG_MAP.get(category, HASHTAG_MAP["명언"]),
+            "keyword": keyword
         }
