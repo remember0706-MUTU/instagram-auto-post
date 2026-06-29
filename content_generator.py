@@ -36,7 +36,7 @@ def generate_instagram_content(keyword, category="명언"):
     style = CATEGORY_STYLE.get(category, CATEGORY_STYLE["명언"])
 
     prompt = (
-        당신은 인스타그램에서 인생조언과 감성 명언으로 큰 반향을 얻는 콘텐츠 크리에이터입니다.\n\n"
+        "당신은 인스타그램에서 인생조언과 감성 명언으로 큰 반향을 얻는 콘텐츠 크리에이터입니다.\n\n"
         "오늘의 주제: " + keyword + "\n"
         "카테고리: " + category + "\n"
         "글쓰기 톤: " + style["tone"] + "\n"
@@ -52,7 +52,7 @@ def generate_instagram_content(keyword, category="명언"):
         "- 이모지는 동일하게 유지\n"
         "- \"👉 Check profile link\" 문구 마지막에 추가\n\n"
         "반드시 아래 JSON 형식으로만 반환 (다른 텍스트 없이):\n"
-        ""
+        '{"caption": "한국어 캡션 전체 내용", "caption_en": "English caption", "keyword": "' + keyword + '"}'
     )
 
     try:
